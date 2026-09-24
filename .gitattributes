@@ -1,0 +1,36 @@
+# Unity .gitattributes
+# Autodetectar archivos de texto y normalizar fin de linea a LF en el repo
+* text=auto
+
+# Archivos de Unity tratados como texto con merge por union
+*.cs text diff=csharp
+*.cginc text
+*.shader text
+*.meta text merge=union eol=lf
+*.unity text merge=union eol=lf
+*.asset text merge=union eol=lf
+*.prefab text merge=union eol=lf
+*.mat text merge=union eol=lf
+*.anim text merge=union eol=lf
+*.controller text merge=union eol=lf
+*.physicMaterial2D text merge=union eol=lf
+*.json text eol=lf
+*.txt text
+*.md text
+
+# Binarios (nunca hacer diff/merge de texto)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.psd binary
+*.aseprite binary
+*.ase binary
+*.wav binary
+*.mp3 binary
+*.ogg binary
+*.fbx binary
+*.ttf binary
+*.otf binary
+*.dll binary
+*.unitypackage binary
