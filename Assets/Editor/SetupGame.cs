@@ -101,6 +101,54 @@ public class SetupGame : EditorWindow
         Debug.Log("UI Contador de abejas creado correctamente.");
     }
 
+    [MenuItem("Tools/Setup Game/1b - Setup Audio en SampleScene")]
+    static void SetupAudio()
+    {
+        var scene = SceneManager.GetActiveScene();
+        if (scene.name != "SampleScene")
+        {
+            EditorUtility.DisplayDialog("Error", "Abre SampleScene primero.", "OK");
+            return;
+        }
+
+        // Crear objeto de música ambiental
+        var musicGO = new GameObject("MusicaAmbiental");
+        var musicAS = musicGO.AddComponent<AudioSource>();
+        var musicClip = AssetDatabase.LoadAssetAtPath<AudioClip>(
+            "Assets/Audio/Minifantasy_Dungeon_Music/Minifantasy_Dungeon_Music/Music/Goblins_Den_(Regular).wav");
+        if (musicClip != null)
+        {
+            musicAS.clip = musicClip;
+            musicAS.loop = true;
+            musicAS.playOnAwake = true;
+            musicAS.volume = 0.3f;
+        }
+
+        // Asignar AudioClips al Jugador
+        var jugador = Object.FindFirstObjectByType<Jugador>();
+        if (jugador != null)
+        {
+            jugador.audioSource = jugador.GetComponent<AudioSource>();
+            if (jugador.audioSource == null)
+                jugador.audioSource = jugador.gameObject.AddComponent<AudioSource>();
+            jugador.audioSource.playOnAwake = false;
+
+            var abeja = AssetDatabase.LoadAssetAtPath<AudioClip>(
+                "Assets/Audio/Minifantasy_Dungeon_SFX/01_chest_open_1.wav");
+            var puerquito = AssetDatabase.LoadAssetAtPath<AudioClip>(
+                "Assets/Audio/Minifantasy_Dungeon_SFX/11_human_damage_1.wav");
+            var caracol = AssetDatabase.LoadAssetAtPath<AudioClip>(
+                "Assets/Audio/Minifantasy_Dungeon_SFX/26_sword_hit_1.wav");
+            if (abeja != null) jugador.audioAbeja = abeja;
+            if (puerquito != null) jugador.audioPuerquito = puerquito;
+            if (caracol != null) jugador.audioCaracol = caracol;
+            EditorUtility.SetDirty(jugador);
+        }
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        Debug.Log("Audio configurado: música ambiental + efectos del jugador.");
+    }
+
     [MenuItem("Tools/Setup Game/2 - Crear Zona de Muerte")]
     static void CrearZonaDeMuerte()
     {
@@ -179,8 +227,14 @@ public class SetupGame : EditorWindow
         tituloRT.anchoredPosition = Vector2.zero;
         tituloRT.sizeDelta = new Vector2(800, 100);
 
+        // Cargar sprites de botones
+        string btnBasePath = "Assets/Sprites/Botones/UI_Button_Pack_Minimal_84_PNGs_By_Csmikelandre/UI_Button_Pack_Minimal_84_PNGs_By_Csmikelandre/BOTTOMS_PIXEL/";
+        var playSprite = AssetDatabase.LoadAssetAtPath<Sprite>(btnBasePath + "PLAY_BOTTOM_PIXEL_1.png");
+        var optionsSprite = AssetDatabase.LoadAssetAtPath<Sprite>(btnBasePath + "OPTIONS_BOTTOM_PIXEL_1.png");
+        var exitSprite = AssetDatabase.LoadAssetAtPath<Sprite>(btnBasePath + "EXIT_BOTTOM_PIXEL_1.png");
+
         // --- Botón Jugar ---
-        var btnJugar = CreateMenuButton(canvasGO.transform, "BtnJugar", "Jugar", new Vector2(0, 50));
+        var btnJugar = CreateMenuButton(canvasGO.transform, "BtnJugar", "", new Vector2(0, 50), playSprite);
         var btnJugarComp = btnJugar.GetComponent<Button>();
         var camRef = cam;
         UnityEditor.Events.UnityEventTools.AddPersistentListener(
@@ -188,10 +242,10 @@ public class SetupGame : EditorWindow
             camRef.GetComponent<OpcionesMenu>().vamosAjugar);
 
         // --- Botón Opciones ---
-        var btnOpciones = CreateMenuButton(canvasGO.transform, "BtnOpciones", "Opciones", new Vector2(0, -50));
+        var btnOpciones = CreateMenuButton(canvasGO.transform, "BtnOpciones", "", new Vector2(0, -50), optionsSprite);
 
         // --- Botón Salir ---
-        var btnSalir = CreateMenuButton(canvasGO.transform, "BtnSalir", "Salir", new Vector2(0, -150));
+        var btnSalir = CreateMenuButton(canvasGO.transform, "BtnSalir", "", new Vector2(0, -150), exitSprite);
         var btnSalirComp = btnSalir.GetComponent<Button>();
         UnityEditor.Events.UnityEventTools.AddPersistentListener(
             btnSalirComp.onClick,
@@ -254,12 +308,22 @@ public class SetupGame : EditorWindow
         Debug.Log("Escena MenuPrincipal creada y configurada en Build Settings (índice 0).");
     }
 
-    static GameObject CreateMenuButton(Transform parent, string name, string label, Vector2 pos)
+    static GameObject CreateMenuButton(Transform parent, string name, string label, Vector2 pos, Sprite sprite = null)
     {
         var btnGO = new GameObject(name, typeof(RectTransform));
         btnGO.transform.SetParent(parent, false);
         var img = btnGO.AddComponent<Image>();
-        img.color = new Color(0.3f, 0.3f, 0.6f, 1f);
+        if (sprite != null)
+        {
+            img.sprite = sprite;
+            img.type = Image.Type.Simple;
+            img.preserveAspect = true;
+            img.color = Color.white;
+        }
+        else
+        {
+            img.color = new Color(0.3f, 0.3f, 0.6f, 1f);
+        }
         var btn = btnGO.AddComponent<Button>();
         btn.targetGraphic = img;
         var btnRT = btnGO.GetComponent<RectTransform>();
