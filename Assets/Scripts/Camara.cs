@@ -4,6 +4,7 @@ public class Camara : MonoBehaviour
     public Transform target; // El objetivo que la cámara seguirá
     void LateUpdate()
     {
-        transform.position = new Vector3(target.position.x, transform.position.y, transform.position.z);
+        if (target != null)
+            transform.position = new Vector3(target.position.x, transform.position.y, transform.position.z);
     }
 }

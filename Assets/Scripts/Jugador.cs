@@ -29,6 +29,12 @@ public class Jugador : MonoBehaviour
 
     void Update()
     {
+        if (transform.position.y < -6f)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            return;
+        }
+
         if (!enRetroceso)
         {
             movimiento = Input.GetAxisRaw("Horizontal");
