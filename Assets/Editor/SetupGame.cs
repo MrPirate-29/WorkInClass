@@ -174,7 +174,7 @@ public class SetupGame : EditorWindow
     static void CrearMenuPrincipal()
     {
         // Crear nueva escena
-        var newScene = EditorSceneManagement.EditorSceneManager.NewScene(
+        var newScene = EditorSceneManager.NewScene(
             NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
 
         // Configurar cámara
