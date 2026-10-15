@@ -39,7 +39,7 @@ public class Jugador : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, alturaSalto);
         animator.SetFloat("Velocidad", Mathf.Abs(movimiento));
         animator.SetFloat("VelocidadVertical", rb.linearVelocity.y);
-        animator.SetBool("estaEnPiso", esPiso);
+        animator.SetBool("estarEnPiso", esPiso);
     }
 
     public void FixedUpdate()
