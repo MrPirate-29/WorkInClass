@@ -25,6 +25,33 @@ public class Jugador : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+
+        if (textoAbejas == null)
+        {
+            textoAbejas = FindAnyObjectByType<TMP_Text>();
+        }
+        if (textoAbejas == null)
+        {
+            var canvasGO = new GameObject("Canvas");
+            var canvas = canvasGO.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            var scaler = canvasGO.AddComponent<UnityEngine.UI.CanvasScaler>();
+            scaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+
+            var textoGO = new GameObject("TxTAbejas");
+            textoGO.transform.SetParent(canvasGO.transform, false);
+            textoAbejas = textoGO.AddComponent<TextMeshProUGUI>();
+            textoAbejas.text = "0";
+            textoAbejas.fontSize = 48;
+            textoAbejas.color = Color.white;
+            var rt = textoGO.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0, 1);
+            rt.anchorMax = new Vector2(0, 1);
+            rt.pivot = new Vector2(0, 1);
+            rt.anchoredPosition = new Vector2(20, -20);
+            rt.sizeDelta = new Vector2(200, 60);
+        }
     }
 
     void Update()
